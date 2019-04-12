@@ -23,4 +23,29 @@ fn main() {
             process::exit(1);
         }
     }
+
+    bench_file_parsing();
+}
+
+fn bench_file_parsing() {
+    use std::fs::File;
+    use std::io::BufReader;
+    use std::time::Instant;
+
+    let file = File::open("resource_map.xml").unwrap();
+    let file = BufReader::new(file);
+
+    let now = Instant::now();
+    let resource_map = resource_map::read_resource_map(file);
+    match resource_map {
+        Ok(resource_map) =>  {
+            let elapsed = now.elapsed();
+            let sec = (elapsed.as_secs() as f64) + (elapsed.subsec_nanos() as f64 / 1000_000_000.0);
+            println!("Bundles count: {}, seconds: {}", resource_map.get_bundles_count(), sec);
+        },
+        Err(e) => {
+            eprintln!("{}", e);
+            process::exit(1);
+        }
+    }
 }
