@@ -5,7 +5,7 @@ mod resource_map;
 fn main() {
 
     let xml = r#"
-<?xml version="1.0" enc oding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <ResourceMapData>
   <Bundles>
     <Bundle Filename="bundle01" DownloadSize="42">
