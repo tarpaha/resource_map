@@ -52,12 +52,21 @@ fn read_resource_map(xml: &str) -> Result<ResourceMap, String> {
             Ok(XmlEvent::StartElement { name, attributes, .. }) => {
                 match name.local_name.as_str() {
                     "Bundle" => {
-                        let name = attributes.iter().find(|x| x.name.local_name.as_str() == "Filename").unwrap().value.to_string();
-                        let size = attributes.iter().find(|x| x.name.local_name.as_str() == "DownloadSize").unwrap().value.parse::<u32>().unwrap();
-                        current_bundle = Some(Bundle::new(name, size));
+                        let name = attributes.iter().find(|x| x.name.local_name.as_str() == "Filename");
+                        if name == None {
+                            return Err("Cannot find attribute Filename in Bundle tag".to_string());
+                        }
+                        let size = attributes.iter().find(|x| x.name.local_name.as_str() == "DownloadSize");
+                        if size == None {
+                            return Err("Cannot find attribute DownloadSize in Bundle tag".to_string());
+                        }
+                        match size.unwrap().value.parse::<u32>() {
+                            Ok(size) => current_bundle = Some(Bundle::new(name.unwrap().value.to_string(), size)),
+                            Err(e) => return Err(e.to_string())
+                        }
                     },
                     "Asset" => {
-                        let path_attr = attributes.iter().find(|x| x.name.local_name.as_str() == "AssetPath");//.unwrap().value.to_string();
+                        let path_attr = attributes.iter().find(|x| x.name.local_name.as_str() == "AssetPath");
                         match path_attr {
                             Some(path) => {
                                 match current_bundle {
