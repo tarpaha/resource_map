@@ -32,10 +32,11 @@ fn bench_file_parsing() {
     use std::io::BufReader;
     use std::time::Instant;
 
+    let now = Instant::now();
+
     let file = File::open("resource_map.xml").unwrap();
     let file = BufReader::new(file);
 
-    let now = Instant::now();
     let resource_map = resource_map::read_resource_map(file);
     match resource_map {
         Ok(resource_map) =>  {
