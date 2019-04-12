@@ -37,6 +37,9 @@ impl ResourceMap {
     pub fn add_bundle(&mut self, bundle: Bundle) {
         self.bundles.push(bundle);
     }
+    pub fn get_bundles_count(&self) -> usize {
+        return self.bundles.len();
+    }
 }
 
 #[cfg(test)]
