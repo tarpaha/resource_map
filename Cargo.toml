@@ -1,0 +1,8 @@
+[package]
+name = "resource_map"
+version = "0.1.0"
+authors = ["tarpaha <ppopchikovsky@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+xml-rs = "0.8"
