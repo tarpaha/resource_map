@@ -1,13 +1,14 @@
 extern crate xml;
 
+use std::io::Read;
 use xml::reader::{EventReader, XmlEvent};
 
 mod types;
 
-pub fn read_resource_map(xml: &str) -> Result<types::ResourceMap, String> {
+pub fn read_resource_map<R: Read>(data: R) -> Result<types::ResourceMap, String> {
     let mut resource_map = types::ResourceMap::new();
     let mut current_bundle: Option<types::Bundle> = None;
-    let parser = EventReader::new(xml.as_bytes());
+    let parser = EventReader::new(data);
     for event in parser {
         match event {
             Ok(XmlEvent::StartElement { name, attributes, .. }) => {

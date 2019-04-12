@@ -15,7 +15,7 @@ fn main() {
 </ResourceMapData>
 "#;
 
-    let resource_map = resource_map::read_resource_map(xml);
+    let resource_map = resource_map::read_resource_map(xml.as_bytes());
     match resource_map {
         Ok(resource_map) => println!("{:?}", resource_map),
         Err(e) => {
