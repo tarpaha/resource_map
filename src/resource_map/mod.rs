@@ -2,50 +2,11 @@ extern crate xml;
 
 use xml::reader::{EventReader, XmlEvent};
 
-#[derive(Debug)]
-struct Asset {
-    path: String
-}
+mod types;
 
-impl Asset {
-    fn new(path: String) -> Asset {
-        Asset { path }
-    }
-}
-
-#[derive(Debug)]
-struct Bundle {
-    name: String,
-    size: u32,
-    assets: Vec<Asset>
-}
-
-impl Bundle {
-    fn new(name: String, size: u32) -> Bundle {
-        Bundle { name, size, assets: vec![] }
-    }
-    fn add_asset(&mut self, asset: Asset) {
-        self.assets.push(asset);
-    }
-}
-
-#[derive(Debug)]
-pub struct ResourceMap {
-    bundles: Vec<Bundle>
-}
-
-impl ResourceMap {
-    fn new() -> ResourceMap {
-        ResourceMap{ bundles: vec![] }
-    }
-    fn add_bundle(&mut self, bundle: Bundle) {
-        self.bundles.push(bundle);
-    }
-}
-
-pub fn read_resource_map(xml: &str) -> Result<ResourceMap, String> {
-    let mut resource_map = ResourceMap::new();
-    let mut current_bundle: Option<Bundle> = None;
+pub fn read_resource_map(xml: &str) -> Result<types::ResourceMap, String> {
+    let mut resource_map = types::ResourceMap::new();
+    let mut current_bundle: Option<types::Bundle> = None;
     let parser = EventReader::new(xml.as_bytes());
     for event in parser {
         match event {
@@ -61,7 +22,7 @@ pub fn read_resource_map(xml: &str) -> Result<ResourceMap, String> {
                             return Err("Cannot find attribute DownloadSize in Bundle tag".to_string());
                         }
                         match size.unwrap().value.parse::<u32>() {
-                            Ok(size) => current_bundle = Some(Bundle::new(name.unwrap().value.to_string(), size)),
+                            Ok(size) => current_bundle = Some(types::Bundle::new(name.unwrap().value.to_string(), size)),
                             Err(e) => return Err(e.to_string())
                         }
                     },
@@ -70,7 +31,7 @@ pub fn read_resource_map(xml: &str) -> Result<ResourceMap, String> {
                         match path_attr {
                             Some(path) => {
                                 match current_bundle {
-                                    Some(ref mut bundle) => bundle.add_asset(Asset::new(path.value.to_string())),
+                                    Some(ref mut bundle) => bundle.add_asset(types::Asset::new(path.value.to_string())),
                                     None => return Err("Found opening Asset tag out of Bundle scope".to_string())
                                 }
                             }
